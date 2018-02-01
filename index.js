@@ -30,10 +30,7 @@ else {
     var mongodbUri = process.env.MONGODB_URI;
 }
 
-app.get('/', function(req, res) {
-    res.send("Welcome friend ( ͡° ͜ʖ ͡°)");
-});
-
+require("./routes")(app);
 
 app.listen(port, function() {
     console.log('🅱️erver listening on port ' + port);
