@@ -7,10 +7,19 @@ var express = require('express'),
 
 //Mongoose stuff
 mongoose.Promise = global.Promise;
-var Chat = require('./node_modules/physical-telegram-stickers-models/mongo/Chat'),
-    StickerGroup = require('./node_modules/physical-telegram-stickers-models/mongo/StickerGroup'),
-    Sticker = require('./node_modules/physical-telegram-stickers-models/mongo/Sticker');
 
+if (process.env.MONGODB_URI === undefined) {
+    // Server with no authentication
+    global.mongodbUri = "mongodb://";
+    mongodbUri += process.env.MONGODB_HOST + ":" +
+    process.env.MONGODB_PORT + "/" +
+    process.env.MONGODB_DATABASE;
+}
+else {
+    // URI set on production/staging
+    global.mongodbUri = process.env.MONGODB_URI;
+}
+    
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({
   extended: true
@@ -18,18 +27,8 @@ app.use(bodyParser.urlencoded({
 
 var port = process.env.PORT || 3000;
 
-if (process.env.MONGODB_URI === undefined) {
-    // Server with no authentication
-    var mongodbUri = "mongodb://";
-    mongodbUri += process.env.MONGODB_HOST + ":" +
-    process.env.MONGODB_PORT + "/" +
-    process.env.MONGODB_DATABASE;
-}
-else {
-    // URI set on production/staging
-    var mongodbUri = process.env.MONGODB_URI;
-}
 
+// Include routes
 require("./routes")(app);
 
 app.listen(port, function() {
