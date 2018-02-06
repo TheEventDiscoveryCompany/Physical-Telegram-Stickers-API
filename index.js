@@ -4,7 +4,8 @@ const express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
     Knex = require('knex'),
-    knexfile = require('./knexfile');
+    knexfile = require('./knexfile'),
+    Helpers = require('./helpers/Helpers');
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 
@@ -20,6 +21,17 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({
     extended: true
 })); // for parsing application/x-www-form-urlencoded
+
+// This should be the last call in the middleware stack
+app.use(function(err, req, res, next) {
+    if (err instanceof SyntaxError) {
+        // error handling logic
+        res.status(400).json(Helpers.getResponseJson({}, 'Invalid JSON format: ' + err.message));
+    }
+    else {
+        next();
+    }
+});
 
 var port = process.env.PORT || 3000;
 
