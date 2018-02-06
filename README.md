@@ -1,6 +1,22 @@
 # Physical-Telegram-Stickers-API
 A🅱️I for PTS yo
 
-## NPM Modules with Private Repos
+## Database migrations
+All database modifications must be done within migration scripts, which knex conveniently provides. For more clarification visit the [knex docs](http://knexjs.org/#Migrations).
 
-In order to deploy private repos as modules through npm, an oauth token needs to be passed in the git repo URL for the `physical-telegram-stickers-models` module. It's only possible for an oauth token to be tied to a personal account on Github, so if a new token needs to be generated, generate one by following the instructions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).
+### Installing knex
+Before performing any migrations, you will need to install knex globally through npm:
+```bash
+npm install -g knex
+```
+
+### Make a new migration
+```bash
+knex migrate:make migration_name
+```
+
+### Update the database with the latest migrations
+```bash
+knex migrate:latest
+```
+_Note: By default migrations are run on the development database._

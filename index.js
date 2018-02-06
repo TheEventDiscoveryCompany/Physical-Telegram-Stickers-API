@@ -1,28 +1,24 @@
 require('dotenv').config();
 
-var express = require('express'),
+const express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
-    mongoose = require('mongoose');
+    Knex = require('knex'),
+    knexfile = require('./knexfile');
 
-//Mongoose stuff
-mongoose.Promise = global.Promise;
+const nodeEnv = process.env.NODE_ENV || 'development';
 
-if (process.env.MONGODB_URI === undefined) {
-    // Server with no authentication
-    global.mongodbUri = "mongodb://";
-    mongodbUri += process.env.MONGODB_HOST + ":" +
-    process.env.MONGODB_PORT + "/" +
-    process.env.MONGODB_DATABASE;
-}
-else {
-    // URI set on production/staging
-    global.mongodbUri = process.env.MONGODB_URI;
-}
-    
+app.use((req, res, next) => {
+    // Function that parses the tenant id from path, header, query parameter etc.
+    // and returns an instance of knex. You should cache the knex instances and
+    // not create a new one for each query.
+    req.knex = Knex(knexfile[nodeEnv]);
+    next();
+});
+
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 })); // for parsing application/x-www-form-urlencoded
 
 var port = process.env.PORT || 3000;

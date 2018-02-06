@@ -21,7 +21,11 @@
     "body-parser": "^1.18.2",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
-    "mongoose": "^5.0.1",
-    "physical-telegram-stickers-models": "git+https://ba5dadee6519c4ce91d06dcac28ff78229d1a5e3:x-oauth-basic@github.com/TheEventDiscoveryCompany/Physical-Telegram-Stickers-Models.git"
+    "knex": "^0.14.2",
+    "objection": "^0.9.4",
+    "pg": "^7.4.1"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^3.2.0"
   }
 }

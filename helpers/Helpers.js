@@ -1,5 +1,5 @@
-module.exports = {
-    getResponseJson: function(data, errorMessage) {
+class Helpers {
+    static getResponseJson(data, errorMessage) {
         var responseJson;
 
         if (errorMessage != null) {
@@ -18,4 +18,13 @@ module.exports = {
 
         return responseJson;
     }
-};
+
+    static catchAsyncErrors(fn) {
+        return (req, res, next) => {
+            Promise.resolve(fn(req, res, next))
+                .catch(next);
+        };
+    }
+}
+
+module.exports = Helpers;

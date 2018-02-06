@@ -1,31 +1,37 @@
 var express = require('express');
 var router = express.Router();
-var helpers = require('../helpers');
-var mongoose = require('mongoose');
+var Helpers = require('../helpers/Helpers');
+var NotFoundError = require('../helpers/NotFoundError');
+var StickerGroup = require('../models/StickerGroup');
 
-var StickerGroup = require('../node_modules/physical-telegram-stickers-models/mongo/StickerGroup');
+router.get('/:urlSlug', (req, res, next) => {
+    const stickerGroup = StickerGroup
+        .query(req.knex)
+        .where('urlSlug', req.params.urlSlug)
+        .first();
 
-router.get('/:stickerGroupUrlSlug', function(req, res) {
-    mongoose.connect(mongodbUri)
-    .then(() => {
-        console.log("connected");
-        // only finished sticker groups will have a url slug
-        return StickerGroup.findOne({ urlSlug: req.params.stickerGroupUrlSlug})
-            .populate({
-                "path": "stickers"
-            })
-            .exec();
-    })
-    .then(stickerGroup => {
+    stickerGroup.then(stickerGroup => {
         console.log("Got sticker group: ", stickerGroup);
-        var responseJson = helpers.getResponseJson(stickerGroup);
+        if (stickerGroup == null) {
+            return Promise.reject(new NotFoundError("Could not find a sticker group with that url slug"));
+        }
+
+        var responseJson = Helpers.getResponseJson(stickerGroup);
         console.log(responseJson);
         res.status(200).json(responseJson);
     })
     .catch(err => {
-        console.log("Error starting: ", err);
-        var responseJson = helpers.getResponseJson({}, "Could not retrieve sticker group");
-        res.status(500).json(responseJson);
+        if (err instanceof NotFoundError) {
+            var errorMessage = err.message;
+            var statusCode = 404;
+        }
+        else {
+            var errorMessage = "Could not retrieve sticker group";
+            var statusCode = 500;
+        }
+
+        const responseJson = Helpers.getResponseJson({}, errorMessage);
+        res.status(statusCode).json(responseJson);
     });
 });
 
