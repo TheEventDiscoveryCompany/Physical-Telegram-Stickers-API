@@ -18,7 +18,6 @@ class StickerGroup extends Model {
             properties: {
                 id: {type: 'integer'},
                 chatId: {type: 'integer'},
-                urlSlug: {type: 'string'},
                 isAvailable: {type: 'boolean'},
                 isActive: {type: 'boolean'}
             }
@@ -28,21 +27,9 @@ class StickerGroup extends Model {
     // This object defines the relations to other models.
     static get relationMappings() {
         // Import models here to prevent require loops.
-        const Chat = require('./Chat');
         const Sticker = require('./Sticker');
 
         return {
-            chat: {
-                relation: Model.BelongsToOneRelation,
-                // The related model. This can be either a Model
-                // subclass constructor or an absolute file path
-                // to a module that exports one.
-                modelClass: Chat,
-                join: {
-                    from: 'StickerGroup.chatId',
-                    to: 'Chat.id'
-                }
-            },
             stickers: {
                 relation: Model.HasManyRelation,
                 // The related model. This can be either a Model
@@ -50,10 +37,10 @@ class StickerGroup extends Model {
                 // to a module that exports one.
                 modelClass: Sticker,
                 join: {
-                    from: 'StickerGroup.id',
-                    to: 'Sticker.stickerGroupId'
+                    from: StickerGroup.tableName + '.id',
+                    to: Sticker.tableName + '.stickerGroupId'
                 }
-            },
+            }
         };
     }
 }

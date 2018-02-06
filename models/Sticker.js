@@ -36,8 +36,8 @@ class Sticker extends Model {
                 // to a module that exports one.
                 modelClass: StickerGroup,
                 join: {
-                    from: 'Sticker.stickerGroupId',
-                    to: 'StickerGroup.id'
+                    from: Sticker.tableName + '.stickerGroupId',
+                    to: StickerGroup.tableName + '.id'
                 }
             }
         };
