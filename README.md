@@ -1,6 +1,8 @@
 # Physical-Telegram-Stickers-API
 A🅱️I for PTS yo
 
+This API adheres to REST standards as well as possible (without going completely overboard). All endpoints correspond to CRUD operations on various resources.
+
 ## Database migrations
 All database modifications must be done within migration scripts, which knex conveniently provides. For more clarification visit the [knex docs](http://knexjs.org/#Migrations).
 

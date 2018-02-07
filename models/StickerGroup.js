@@ -1,6 +1,6 @@
-const { Model } = require('objection');
+const BaseModel = require('./BaseModel');
 
-class StickerGroup extends Model {
+class StickerGroup extends BaseModel {
     static get tableName() {
         return 'sticker_groups';
     }
@@ -31,7 +31,7 @@ class StickerGroup extends Model {
 
         return {
             stickers: {
-                relation: Model.HasManyRelation,
+                relation: BaseModel.HasManyRelation,
                 // The related model. This can be either a Model
                 // subclass constructor or an absolute file path
                 // to a module that exports one.
