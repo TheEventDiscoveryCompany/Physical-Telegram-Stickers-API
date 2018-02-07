@@ -2,7 +2,8 @@ const express = require('express'),
     router = express.Router(),
     Helpers = require('../helpers/Helpers'),
     RequestError = require('../helpers/RequestError'),
-    StickerGroup = require('../models/StickerGroup');
+    StickerGroup = require('../models/StickerGroup'),
+    NotFoundError = require('objection').Model.NotFoundError;
 
 
 // CREATE sticker group
@@ -11,18 +12,23 @@ router.post('/', (req, res, next) => {
 
     // Verify parameters
     if (req.body.chatId == null) {
-        throw new RequestError({ chatId: "Please provide a chat ID" });
+        errors.chatId = "Chat ID is required";
     }
     else if (isNaN(req.body.chatId)) {
-        throw new RequestError({ chatId: "Please provide a numeric chat ID" });
+        errors.chatId = "Chat ID must be numeric";
     }
+
+    if (!Helpers.isObjectEmpty(errors)) {
+        throw new RequestError(errors);
+    }
+
+    req.body.chatId = parseInt(req.body.chatId, 10);
 
     // Create new sticker group
     StickerGroup
         .query(req.knex)
-        .insert({ chatId: parseInt(req.body.chatId, 10) })
+        .insert(req.body)
         .then(stickerGroup => {
-            console.log(stickerGroup);
             const responseJson = Helpers.getResponseJson(stickerGroup);
             res.status(200).json(responseJson);
         })
@@ -35,10 +41,13 @@ router.post('/', (req, res, next) => {
 // READ sticker group
 router.get('/:id', (req, res, next) => {
     StickerGroup
-        .query(req.knex).where('id', req.params.id)
+        .query(req.knex)
+        .where('id', req.params.id)
         .first()
-        .throwIfNotFound()
         .then(stickerGroup => {
+            if (stickerGroup == null) {
+                throw new NotFoundError("Sticker Group not found");
+            }
             const responseJson = Helpers.getResponseJson(stickerGroup);
             res.status(200).json(responseJson);
         })

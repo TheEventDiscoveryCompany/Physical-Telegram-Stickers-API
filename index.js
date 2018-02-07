@@ -55,7 +55,7 @@ app.use(function(err, req, res, next) {
         res.status(400).json(Helpers.getResponseJson(validationErrors, 'Validation error'));
     }
     else if (err instanceof Model.NotFoundError) {
-        res.status(400).json(Helpers.getResponseJson({}, 'Resource not found'));
+        res.status(400).json(Helpers.getResponseJson({}, err.data));
     }
     // Fallback for all other errors
     else if (err instanceof Error) {
