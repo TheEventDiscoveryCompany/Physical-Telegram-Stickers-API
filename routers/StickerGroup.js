@@ -3,6 +3,7 @@ const express = require('express'),
     Helpers = require('../helpers/Helpers'),
     RequestError = require('../helpers/RequestError'),
     StickerGroup = require('../models/StickerGroup'),
+    OrderRouter = require('./Order'),
     NotFoundError = require('objection').Model.NotFoundError;
 
 
@@ -39,10 +40,10 @@ router.post('/', (req, res, next) => {
 
 
 // READ sticker group
-router.get('/:id', (req, res, next) => {
+router.get('/:stickerGroupId', (req, res, next) => {
     StickerGroup
         .query(req.knex)
-        .where('id', req.params.id)
+        .where('id', req.params.stickerGroupId)
         .first()
         .then(stickerGroup => {
             if (stickerGroup == null) {
@@ -57,13 +58,13 @@ router.get('/:id', (req, res, next) => {
 });
 
 // UPDATE sticker group
-router.put('/:id', (req, res, next) => {
+router.put('/:stickerGroupId', (req, res, next) => {
     var errors = {};
 
     // Create new sticker group
     StickerGroup
         .query(req.knex)
-        .patchAndFetchById(req.params.id, req.body)
+        .patchAndFetchById(req.params.stickerGroupId, req.body)
         .then(stickerGroup => {
             const responseJson = Helpers.getResponseJson(stickerGroup);
             res.status(200).json(responseJson);
@@ -72,5 +73,7 @@ router.put('/:id', (req, res, next) => {
             next(err);
         });
 });
+
+router.use('/:stickerGroupId/orders', OrderRouter);
 
 module.exports = router;

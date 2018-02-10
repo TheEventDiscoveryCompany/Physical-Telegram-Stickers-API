@@ -62,12 +62,14 @@ app.use(function(err, req, res, next) {
         console.log(err);
         res.status(400).json(Helpers.getResponseJson({}, 'An unknown error has occurred'));
     }
+    // 404 error
+    // The only time this will be reached is if a request hasn't been sent yet, thus 404
     else {
-        next(err);
+        res.status(404).json(Helpers.getResponseJson({}, 'Route not found'));
     }
 });
 
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 app.listen(port, function() {
     console.log('🅱️erver listening on port ' + port);
